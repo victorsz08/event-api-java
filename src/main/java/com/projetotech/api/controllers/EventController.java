@@ -1,7 +1,10 @@
 package com.projetotech.api.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.projetotech.api.domain.event.Event;
 import com.projetotech.api.domain.event.EventRequestDto;
+import com.projetotech.api.domain.event.EventResponseDto;
 import com.projetotech.api.services.EventService;
 
 @RestController
@@ -33,4 +37,21 @@ public class EventController {
         Event newEvent = eventService.createEvent(eventRequestDto);
         return ResponseEntity.ok(newEvent);
     }
+
+    @GetMapping
+    public ResponseEntity<List<EventResponseDto>> getEvents(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        List<EventResponseDto> events = eventService.getUpcomingEvents(page, size);
+        return ResponseEntity.ok(events);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<EventResponseDto>> getFilteredEvents(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String city,
+        @RequestParam(required = false) String uf,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate
+    ) {}
 }
